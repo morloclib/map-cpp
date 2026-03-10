@@ -5,6 +5,7 @@ import root-cpp
 
 type Cpp => (Map a b) = "std::map<$1,$2>" a b
 
+%inline
 source Cpp from "map.hpp"
     ( "morloc_keys" as keys
     , "morloc_vals" as values
