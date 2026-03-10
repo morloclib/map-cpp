@@ -1,0 +1,4 @@
+#!/bin/sh
+exec morloc-nexus "$0" "$@"
+### MANIFEST ###
+{"version":1,"name":"test-map-cpp","build_dir":"/home/z/projects/morloc-core/morloc-workspace/lib/stdlib/map-cpp","build_time":1773113849,"pools":[{"lang":"cpp","exec":["pools/test-map-cpp/pool-cpp.out"],"socket":"pipe-cpp"},{"lang":"py","exec":["python3","pools/test-map-cpp/pool.py"],"socket":"pipe-py"}],"commands":[{"name":"test","type":"remote","mid":1,"pool":0,"needed_pools":[0,1],"arg_schemas":[],"return_schema":"<bool>b","desc":[],"return_type":"Bool","return_desc":[],"args":[],"group":null}],"groups":[]}

@@ -1,0 +1,4 @@
+module test-map-cpp (test)
+
+import map.test (test)
+import map-cpp

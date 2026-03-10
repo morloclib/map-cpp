@@ -1,0 +1,35 @@
+module map-cpp (*)
+
+import map
+import root-cpp
+
+type Cpp => (Map a b) = "std::map<$1,$2>" a b
+
+source Cpp from "map.hpp"
+    ( "morloc_keys" as keys
+    , "morloc_vals" as values
+    , "morloc_lookup" as lookup
+    , "morloc_insert" as insert
+    , "morloc_delete" as delete
+    , "morloc_from_list" as fromList
+    , "morloc_to_list" as toList
+    , "morloc_map_val" as mapValues
+    , "morloc_map_key" as mapKeys
+    , "morloc_filter_map" as filterMap
+    , "morloc_emptyMap" as emptyMap
+    , "morloc_singleton" as singleton
+    , "morloc_member" as member
+    , "morloc_size" as size
+    , "morloc_union" as union
+    , "morloc_unionWith" as unionWith
+    , "morloc_intersectionWith" as intersectionWith
+    , "morloc_difference" as difference
+    , "morloc_mapWithKey" as mapWithKey
+    , "morloc_foldWithKey" as foldWithKey
+    )
+
+instance Packable ([key],[val]) (Map key val) where
+  source Cpp from "map.hpp"
+   ( "morloc_packMap" as pack
+   , "morloc_unpackMap" as unpack
+   )

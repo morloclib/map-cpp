@@ -1,0 +1,11 @@
+name: map-cpp
+version: 0.1.0
+homepage: https://github.com/morloclib/map-cpp
+synopsis: C++ implementations for map operations
+description: C++ implementations for map operations
+category: data
+license: MIT
+author: "Zebulun Arendsee"
+maintainer: "z@morloc.io"
+github: https://github.com/morloclib/map-cpp
+bug-reports: https://github.com/morloclib/map-cpp
