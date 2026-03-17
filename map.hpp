@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <functional>
+#include <type_traits>
 #include <utility>
 #include <stdexcept>
 #include <cassert>
@@ -147,8 +148,8 @@ std::map<K, V> morloc_union(const std::map<K, V>& a, const std::map<K, V>& b) {
 }
 
 // unionWith :: (b -> b -> b) -> Map a b -> Map a b -> Map a b
-template <class K, class V>
-std::map<K, V> morloc_unionWith(std::function<V(V, V)> f, const std::map<K, V>& a, const std::map<K, V>& b) {
+template <class K, class V, class F>
+std::map<K, V> morloc_unionWith(F f, const std::map<K, V>& a, const std::map<K, V>& b) {
     std::map<K, V> result(a);
     for (const auto& pair : b) {
         auto it = result.find(pair.first);
@@ -162,8 +163,8 @@ std::map<K, V> morloc_unionWith(std::function<V(V, V)> f, const std::map<K, V>& 
 }
 
 // intersectionWith :: (b -> b -> b) -> Map a b -> Map a b -> Map a b
-template <class K, class V>
-std::map<K, V> morloc_intersectionWith(std::function<V(V, V)> f, const std::map<K, V>& a, const std::map<K, V>& b) {
+template <class K, class V, class F>
+std::map<K, V> morloc_intersectionWith(F f, const std::map<K, V>& a, const std::map<K, V>& b) {
     std::map<K, V> result;
     for (const auto& pair : a) {
         auto it = b.find(pair.first);
@@ -189,8 +190,11 @@ std::map<K, V> morloc_difference(const std::map<K, V>& a, const std::map<K, V>& 
 // --- Transform ---
 
 // mapValues :: (b -> c) -> Map a b -> Map a c
-template <typename Key, typename Value, typename NewValue>
-std::map<Key, NewValue> morloc_map_val(std::function<NewValue(const Value&)> transform, const std::map<Key, Value>& map) {
+template <typename Key, typename Value, typename F>
+auto morloc_map_val(F transform, const std::map<Key, Value>& map)
+    -> std::map<Key, std::invoke_result_t<F, const Value&>>
+{
+    using NewValue = std::invoke_result_t<F, const Value&>;
     std::map<Key, NewValue> result;
     for (const auto& pair : map) {
         result[pair.first] = transform(pair.second);
@@ -199,8 +203,11 @@ std::map<Key, NewValue> morloc_map_val(std::function<NewValue(const Value&)> tra
 }
 
 // mapKeys :: (a -> c) -> Map a b -> Map c b
-template <typename Key, typename Value, typename NewKey>
-std::map<NewKey, Value> morloc_map_key(std::function<NewKey(const Key&)> transform, const std::map<Key, Value>& map) {
+template <typename Key, typename Value, typename F>
+auto morloc_map_key(F transform, const std::map<Key, Value>& map)
+    -> std::map<std::invoke_result_t<F, const Key&>, Value>
+{
+    using NewKey = std::invoke_result_t<F, const Key&>;
     std::map<NewKey, Value> result;
     for (const auto& pair : map) {
         result[transform(pair.first)] = pair.second;
@@ -209,8 +216,11 @@ std::map<NewKey, Value> morloc_map_key(std::function<NewKey(const Key&)> transfo
 }
 
 // mapWithKey :: (a -> b -> c) -> Map a b -> Map a c
-template <class K, class V, class W>
-std::map<K, W> morloc_mapWithKey(std::function<W(K, V)> f, const std::map<K, V>& m) {
+template <class K, class V, class F>
+auto morloc_mapWithKey(F f, const std::map<K, V>& m)
+    -> std::map<K, std::invoke_result_t<F, const K&, const V&>>
+{
+    using W = std::invoke_result_t<F, const K&, const V&>;
     std::map<K, W> result;
     for (const auto& pair : m) {
         result[pair.first] = f(pair.first, pair.second);
@@ -219,8 +229,8 @@ std::map<K, W> morloc_mapWithKey(std::function<W(K, V)> f, const std::map<K, V>&
 }
 
 // filterMap :: (a -> b -> Bool) -> Map a b -> Map a b
-template <class K, class V>
-std::map<K, V> morloc_filter_map(std::function<bool(K, V)> f, const std::map<K, V>& m) {
+template <class K, class V, class F>
+std::map<K, V> morloc_filter_map(F f, const std::map<K, V>& m) {
     std::map<K, V> result;
     for (const auto& pair : m) {
         if (f(pair.first, pair.second)) {
@@ -231,8 +241,8 @@ std::map<K, V> morloc_filter_map(std::function<bool(K, V)> f, const std::map<K, 
 }
 
 // foldWithKey :: (c -> a -> b -> c) -> c -> Map a b -> c
-template <class K, class V, class C>
-C morloc_foldWithKey(std::function<C(C, K, V)> f, C init, const std::map<K, V>& m) {
+template <class K, class V, class C, class F>
+C morloc_foldWithKey(F f, C init, const std::map<K, V>& m) {
     C acc = init;
     for (const auto& pair : m) {
         acc = f(acc, pair.first, pair.second);
