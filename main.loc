@@ -32,7 +32,7 @@ instance Sizeable (Map a b) where
     %inline
     source Cpp from "map.hpp" ("morloc_size" as size)
 
-instance Packable ([key],[val]) (Map key val) where
+instance Packable [(key, val)] (Map key val) where
   source Cpp from "map.hpp"
    ( "morloc_packMap" as pack
    , "morloc_unpackMap" as unpack
