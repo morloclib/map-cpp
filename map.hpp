@@ -70,13 +70,14 @@ std::vector<std::tuple<K, V>> morloc_to_list(const std::map<K, V>& m) {
 // --- Query ---
 
 // lookup :: a -> Map a b -> ?b
+// An absent key is a null, not a raise.
 template <class K, class V>
-V morloc_lookup(const K& key, const std::map<K, V>& m) {
+std::optional<V> morloc_lookup(const K& key, const std::map<K, V>& m) {
     auto it = m.find(key);
     if (it == m.end()) {
-        throw std::runtime_error("Key not found in map");
+        return std::nullopt;
     }
-    return it->second;
+    return std::optional<V>{it->second};
 }
 
 // member :: a -> Map a b -> Bool
