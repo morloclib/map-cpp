@@ -151,7 +151,7 @@ std::map<K, V> morloc_unionWith(F f, const std::map<K, V>& a, const std::map<K, 
     for (const auto& pair : b) {
         auto it = result.find(pair.first);
         if (it != result.end()) {
-            it->second = f(it->second, pair.second);
+            it->second = f(std::move(it->second), pair.second);
         } else {
             result[pair.first] = pair.second;
         }
@@ -242,7 +242,7 @@ template <class K, class V, class C, class F>
 C morloc_foldWithKey(F f, C init, const std::map<K, V>& m) {
     C acc = init;
     for (const auto& pair : m) {
-        acc = f(acc, pair.first, pair.second);
+        acc = f(std::move(acc), pair.first, pair.second);
     }
     return acc;
 }
